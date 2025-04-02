@@ -16,13 +16,21 @@ export default function RestaurantDetailScreen({ navigation, route }) {
   const [restaurant, setRestaurant] = useState({})
 
   useEffect(() => {
-    console.log('Loading restaurant, please wait 2 seconds')
-    setTimeout(() => {
-      const fetchedRestaurant = getDetail(route.params.id)
-      setRestaurant(fetchedRestaurant)
-      console.log('Restaurant loaded')
-    }, 2000)
-  }, [])
+    async function fetchRestaurantDetails () {
+      try {
+        const fetchedRestaurant = await getDetail(route.params.id)
+        setRestaurant(fetchedRestaurant)
+      } catch (error) {
+        showMessage({
+          message: `There was an error while retrieving restaurant details. ${error} `,
+          type: 'error',
+          style: GlobalStyles.flashStyle,
+          titleStyle: GlobalStyles.flashTextStyle
+        })
+      }
+    }
+    fetchRestaurantDetails()
+  }, [route.params.id])
 
   const renderHeader = () => {
     return (
